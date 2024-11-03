@@ -2,6 +2,7 @@ from botasaurus.request import request, Request
 from botasaurus.soupify import soupify
 from botasaurus.browser import browser, Driver, Wait
 from chrome_extension_python import Extension
+from botasaurus.lang import Lang
 import re
 from pathlib import Path
 import json
@@ -10,6 +11,7 @@ import typer
 download_dir = (Path.home() / "Downloads").as_posix()
 
 callbackObj = None
+headless = True
 
 
 @request(output=None)
@@ -28,9 +30,12 @@ def run_request(request: Request, url):
         )
     ],
     output=None,
-    headless=False,
+    headless=headless,
     reuse_driver=True,
     run_async=True,
+    lang=Lang.Chinese,
+    add_arguments=["--mute-audio"],
+    close_on_crash=True,
 )
 def run_browser(driver: Driver, url):
     global callbackObj
@@ -47,7 +52,7 @@ def callback(url, soup, driver=None, response=None):
     domain = "/".join(url.split("/")[0:3])
     title = soup.select("h1")[0].text.strip("有声小说")
     playlist = soup.select("#playlist li a")
-    chapters = [domain + i["href"] for i in playlist]
+    chapters = [{"url": domain + i["href"], "title": i.text} for i in playlist]
     _c = soup.select(".hd-sel option")
     _count = re.sub("[\u4e00-\u9fa5]", "", _c[-1].text)
     chapters_count = int(_count.split(" ")[-1])
@@ -82,12 +87,13 @@ def callback2(url, soup, driver=None, response=None):
 
         if "访问过快！过段时间再试！" in fix_bug[0].text:
             driver.close()
-            raise ("访问过快！过段时间再试！")
+            raise Exception("访问过快！过段时间再试！")
         try:
             audioUrl = audio["src"]
             return {"url": url, "audioUrl": audioUrl}
         except KeyError:
-            return {"url": url, "audioUrl": ""}
+            pass
+    return {"url": url, "audioUrl": ""}
 
 
 def switch_browser(url, callback, mode="browser"):
@@ -134,12 +140,15 @@ def get_audio(data, file_path, mode):
         for i in i:
             audioUrl = i["audioUrl"]
             if audioUrl:
-                print(f"skip {audioUrl}")
+                print(f"skip {audioUrl.split('/')[-1]}")
                 continue
             chaptersUrl = i["chaptersUrl"]
             if chaptersUrl:
                 obj = switch_browser(chaptersUrl, callback=callback2, mode=mode)
                 result = obj.get()
+                if not result:
+                    # raise Exception("error exit app")
+                    return
                 i["audioUrl"] = result["audioUrl"]
                 print(result["audioUrl"])
 
@@ -155,7 +164,10 @@ def main(
     obj = switch_browser(url, callback=callback, mode=mode)
     data = obj.get()
     data["data"] = [[] for i in range(data["pages_count"])]
-    data["data"][0] = [{"chaptersUrl": i, "audioUrl": ""} for i in data["chapters"]]
+    data["data"][0] = [
+        {"chaptersUrl": i["url"], "chaptersTitle": i["title"], "audioUrl": ""}
+        for i in data["chapters"]
+    ]
     del data["chapters"]
 
     file_dir = Path(dirPath) / (data["title"] + " " + data["url"].split("/")[4])
@@ -175,7 +187,8 @@ def main(
         obj = switch_browser(v, callback=callback, mode=mode)
         _data = obj.get()
         data["data"][k] = [
-            {"chaptersUrl": i, "audioUrl": ""} for i in _data["chapters"]
+            {"chaptersUrl": i["url"], "chaptersTitle": i["title"], "audioUrl": ""}
+            for i in _data["chapters"]
         ]
 
         data.update(check_count(data))
