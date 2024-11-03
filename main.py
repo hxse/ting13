@@ -152,9 +152,6 @@ def main(
     mode: str = "browser",
     dirPath: str = download_dir,
 ):
-    """
-    url="https://www.ting13.cc/youshengxiaoshuo/12443"
-    """
     obj = switch_browser(url, callback=callback, mode=mode)
     data = obj.get()
     data["data"] = [[] for i in range(data["pages_count"])]
@@ -188,4 +185,7 @@ def main(
 
 
 if __name__ == "__main__":
+    """
+    uv run python .\main.py "https://www.ting13.cc/youshengxiaoshuo/12443"
+    """
     typer.run(main)
