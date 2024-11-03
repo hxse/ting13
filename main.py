@@ -36,6 +36,7 @@ def run_request(request: Request, url):
     lang=Lang.Chinese,
     add_arguments=["--mute-audio"],
     close_on_crash=True,
+    raise_exception=False,
 )
 def run_browser(driver: Driver, url):
     global callbackObj
