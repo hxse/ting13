@@ -163,9 +163,12 @@ def check_count(data, file_path):
                 chaptersCount += 1
             if "audioUrl" in i and len(i["audioUrl"]) > 0:
                 audiosCount += 1
-            _file_path = get_path(data, i, file_path)
-            if check_audio(_file_path):
-                outputCount += 1
+            try:
+                _file_path = get_path(data, i, file_path)
+                if check_audio(_file_path):
+                    outputCount += 1
+            except KeyError:
+                pass
     return {
         "check_chapters": chaptersCount == data["chapters_count"],
         "check_audios": audiosCount == data["chapters_count"],
@@ -290,7 +293,6 @@ def main(
             {"chaptersUrl": i["url"], "chaptersTitle": i["title"], "audioUrl": ""}
             for i in _data["chapters"]
         ]
-
         data.update(check_count(data, file_path=file_path))
         save_json(file_path, data)
 
