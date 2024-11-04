@@ -669,6 +669,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pathvalidate"
+version = "3.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b4/8c/8713d8dcd8e357b9358695b441ee974580a8addfaea4f01437df07577052/pathvalidate-3.2.1.tar.gz", hash = "sha256:f5d07b1e2374187040612a1fcd2bcb2919f8db180df254c9581bb90bf903377d", size = 59263 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d3/5e/76a9d08b4b4e4583f269cb9f64de267f9aeae0dacef23307f53a14211716/pathvalidate-3.2.1-py3-none-any.whl", hash = "sha256:9a6255eb8f63c9e2135b9be97a5ce08f10230128c4ae7b3e935378b82b22c4c9", size = 23833 },
+]
+
+[[package]]
 name = "psutil"
 version = "6.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -784,6 +793,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "botasaurus" },
     { name = "chrome-extension-python" },
+    { name = "pathvalidate" },
     { name = "typer" },
 ]
 
@@ -791,6 +801,7 @@ dependencies = [
 requires-dist = [
     { name = "botasaurus", specifier = ">=4.0.74" },
     { name = "chrome-extension-python", specifier = ">=1.0.1" },
+    { name = "pathvalidate", specifier = ">=3.2.1" },
     { name = "typer", specifier = ">=0.12.5" },
 ]
 

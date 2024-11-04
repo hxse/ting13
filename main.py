@@ -7,11 +7,29 @@ import re
 from pathlib import Path
 import json
 import typer
+from pathvalidate import sanitize_filename
+
 
 download_dir = (Path.home() / "Downloads").as_posix()
-
+g_file_path = ""
 callbackObj = None
 headless = True
+
+
+def check_audio(file_path):
+    return file_path.is_file() and file_path.stat().st_size > 0
+
+
+@request(output=None)
+def run_download(request: Request, url):
+    global callbackObj, g_file_path
+    if check_audio(g_file_path):
+        print(f"skip audio {g_file_path.name}")
+        return
+
+    response = request.get(url)
+    with open(g_file_path, "wb") as f:
+        f.write(response.content)
 
 
 @request(output=None)
@@ -97,13 +115,23 @@ def callback2(url, soup, driver=None, response=None):
     return {"url": url, "audioUrl": ""}
 
 
-def switch_browser(url, callback, mode="browser"):
-    global callbackObj
+def callback3(url, soup, driver=None, response=None):
+    import pdb
+
+    pdb.set_trace()
+    return {}
+
+
+def switch_browser(url, callback, mode="browser", file_path=""):
+    global callbackObj, g_file_path
     callbackObj = callback
+    g_file_path = file_path
     if mode == "browser":
         return run_browser(url)
-    else:
+    elif mode == "request":
         return run_request(url)
+    elif mode == "download":
+        return run_download(url)
 
 
 def check_count(data):
@@ -136,12 +164,49 @@ def save_json(file_path, data):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
+def download_audio(audioUrl: str, file_path: str):
+    return switch_browser(
+        audioUrl, callback=callback3, mode="download", file_path=file_path
+    )
+
+
+def get_name(data, i):
+    index = len(str(data["chapters_count"]))
+    fill_index = str(i["index"]).zfill(index)
+    suffix = i["audioUrl"].split(".")[-1]
+    name = sanitize_filename(f"{fill_index} {i['chaptersTitle']}.{suffix}")
+    return name
+
+
+def download(i, data, file_path):
+    name = get_name(data, i)
+    file_path = file_path.parent / name
+    audioUrl = i["audioUrl"]
+    if audioUrl:
+        download_audio(audioUrl, file_path=file_path)
+        save_json(file_path, data)
+
+
+def _download_audio(data, file_path):
+    for i in data["data"]:
+        for i in i:
+            download(i, data, file_path)
+
+
 def get_audio(data, file_path, mode):
+    count = 1
+    for i in data["data"]:
+        for i in i:
+            i["index"] = count
+            count += 1
+
+    _download_audio(data, file_path)
+
     for i in data["data"]:
         for i in i:
             audioUrl = i["audioUrl"]
             if audioUrl:
-                print(f"skip {audioUrl.split('/')[-1]}")
+                print(f"skip {get_name(data,i)}")
                 continue
             chaptersUrl = i["chaptersUrl"]
             if chaptersUrl:
@@ -155,6 +220,8 @@ def get_audio(data, file_path, mode):
 
                 data.update(check_count(data))
                 save_json(file_path, data)
+
+                download(i, data, file_path)
 
 
 def main(
