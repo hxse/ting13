@@ -13,7 +13,7 @@ from pathvalidate import sanitize_filename
 download_dir = (Path.home() / "Downloads").as_posix()
 g_file_path = ""
 callbackObj = None
-headless = False
+g_headless = True
 
 
 def check_audio(file_path):
@@ -53,7 +53,7 @@ def run_request(request: Request, url):
         )
     ],
     output=None,
-    headless=headless,
+    headless=g_headless,
     reuse_driver=True,
     run_async=True,
     lang=Lang.Chinese,
@@ -260,7 +260,11 @@ def main(
     url: str,
     mode: str = "browser",
     dirPath: str = download_dir,
+    headless: bool = True,
 ):
+    global g_headless
+    g_headless = headless
+
     obj = switch_browser(url, callback=callback, mode=mode)
     data = obj.get()
     data["data"] = [[] for i in range(data["pages_count"])]
