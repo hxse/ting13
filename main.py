@@ -112,7 +112,7 @@ def callback2(url, soup, driver=None, response=None):
     driver.wait_for_element("#jp_audio_0", wait=Wait.LONG)
 
     for i in range(3):
-        driver.sleep(3)
+        driver.sleep(5)
         soup = soupify(driver)
         audio = soup.select("#play audio")[0]
         fix_bug = soup.select(".tiquma")
