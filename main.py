@@ -260,11 +260,7 @@ def main(
     url: str,
     mode: str = "browser",
     dirPath: str = download_dir,
-    headless: bool = True,
 ):
-    global g_headless
-    g_headless = headless
-
     obj = switch_browser(url, callback=callback, mode=mode)
     data = obj.get()
     data["data"] = [[] for i in range(data["pages_count"])]
