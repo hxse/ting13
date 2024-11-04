@@ -20,6 +20,10 @@ def check_audio(file_path):
     return file_path.is_file() and file_path.stat().st_size > 0
 
 
+def get_domain(url: str):
+    return "/".join(url.split("/")[0:3])
+
+
 @request(output=None)
 def run_download(request: Request, url):
     global callbackObj, g_file_path
@@ -71,7 +75,7 @@ def callback(url, soup, driver=None, response=None):
     https://www.ting13.cc/youshengxiaoshuo/29971
     提取章节目录url
     """
-    domain = "/".join(url.split("/")[0:3])
+    domain = get_domain(url)
     title = soup.select("h1")[0].text.strip("有声小说")
     playlist = soup.select("#playlist li a")
     chapters = [{"url": domain + i["href"], "title": i.text} for i in playlist]
@@ -106,7 +110,7 @@ def callback2(url, soup, driver=None, response=None):
     driver.wait_for_element("#jp_audio_0", wait=Wait.LONG)
 
     for i in range(3):
-        driver.sleep(3)
+        driver.sleep(5)
         soup = soupify(driver)
         audio = soup.select("#play audio")[0]
         fix_bug = soup.select(".tiquma")
@@ -116,10 +120,11 @@ def callback2(url, soup, driver=None, response=None):
             raise Exception("访问过快！过段时间再试！")
 
         if "登录继续收听！" in fix_bug[0].text:
-            print("登录继续收听！")
+            print("登录继续收听, 建议关闭headless, 然后手动登录")
             import pdb
 
             pdb.set_trace()
+            raise Exception("登录后重启即可")
 
         try:
             audioUrl = audio["src"]
