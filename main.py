@@ -13,7 +13,7 @@ from pathvalidate import sanitize_filename
 download_dir = (Path.home() / "Downloads").as_posix()
 g_file_path = ""
 callbackObj = None
-headless = True
+headless = False
 
 
 def check_audio(file_path):
@@ -56,6 +56,8 @@ def run_request(request: Request, url):
     add_arguments=["--mute-audio"],
     close_on_crash=True,
     raise_exception=False,
+    tiny_profile=True,
+    profile="pikachu",
 )
 def run_browser(driver: Driver, url):
     global callbackObj
@@ -103,7 +105,7 @@ def callback2(url, soup, driver=None, response=None):
 
     driver.wait_for_element("#jp_audio_0", wait=Wait.LONG)
 
-    for i in range(5):
+    for i in range(3):
         driver.sleep(3)
         soup = soupify(driver)
         audio = soup.select("#play audio")[0]
@@ -112,6 +114,13 @@ def callback2(url, soup, driver=None, response=None):
         if "访问过快！过段时间再试！" in fix_bug[0].text:
             driver.close()
             raise Exception("访问过快！过段时间再试！")
+
+        if "登录继续收听！" in fix_bug[0].text:
+            print("登录继续收听！")
+            import pdb
+
+            pdb.set_trace()
+
         try:
             audioUrl = audio["src"]
             return {"url": url, "audioUrl": audioUrl}
