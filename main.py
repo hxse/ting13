@@ -202,6 +202,7 @@ def get_name(data, i):
     index = len(str(data["chapters_count"]))
     fill_index = str(i["index"]).zfill(index)
     suffix = i["audioUrl"].split(".")[-1]
+    suffix = suffix if suffix else "m4a"
     name = sanitize_filename(f"{fill_index} {i['chaptersTitle']}.{suffix}")
     return name
 
@@ -242,6 +243,10 @@ def get_audio(data, file_path, mode):
                 print(f"skip {get_name(data,i)}")
                 continue
             chaptersUrl = i["chaptersUrl"]
+            _file_path = get_path(data, i, file_path)
+            if check_audio(_file_path):
+                print(f"skip audioUrl {_file_path.name}")
+                continue
             if chaptersUrl:
                 obj = switch_browser(
                     chaptersUrl, callback=callback2, mode=mode, file_path=file_path
