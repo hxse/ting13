@@ -18,9 +18,9 @@ g_headless = True
 
 def check_audio(file_path):
     new_file_path = file_path.parent / ("!" + file_path.name)
-    return (
-        file_path.is_file() or new_file_path.is_file()
-    ) and file_path.stat().st_size > 0
+    return (file_path.is_file() and file_path.stat().st_size > 0) or (
+        new_file_path.is_file() and new_file_path.stat().st_size > 0
+    )
 
 
 def get_domain(url: str):
