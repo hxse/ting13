@@ -34,7 +34,6 @@ def run_download(request: Request, url):
     response = request.get(url)
     with open(g_file_path, "wb") as f:
         f.write(response.content)
-    print(f"download audio {g_file_path.name}")
 
 
 @request(output=None)
@@ -128,6 +127,7 @@ def callback2(url, soup, driver=None, response=None):
 
         try:
             audioUrl = audio["src"]
+            print(f"audioUrl: {audioUrl.split('/')[-1]}")
             return {"url": url, "audioUrl": audioUrl}
         except KeyError:
             pass
@@ -228,16 +228,13 @@ def _download_audio(data, file_path):
 
 
 def get_audio(data, file_path, mode):
-    count = 1
+    # _download_audio(data, file_path=file_path)
+    count = 0
     for i in data["data"]:
         for i in i:
-            i["index"] = count
             count += 1
+            i["index"] = count
 
-    _download_audio(data, file_path=file_path)
-
-    for i in data["data"]:
-        for i in i:
             audioUrl = i["audioUrl"]
 
             _file_path = get_path(data, i, file_path)
@@ -246,7 +243,9 @@ def get_audio(data, file_path, mode):
                 continue
 
             if audioUrl:
-                print(f"skip {get_name(data,i)}")
+                print(f"skip audioUrl2 {get_name(data,i)}")
+                print(f"download audio2 {get_name(data,i)}")
+                download(i, data, file_path)
                 continue
 
             chaptersUrl = i["chaptersUrl"]
@@ -263,6 +262,7 @@ def get_audio(data, file_path, mode):
                 data.update(check_count(data, file_path=file_path))
                 save_json(file_path, data)
 
+                print(f"download audio {get_name(data,i)}")
                 download(i, data, file_path)
 
 
