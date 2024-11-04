@@ -235,13 +235,12 @@ def get_audio(data, file_path, mode):
             count += 1
             i["index"] = count
 
-            audioUrl = i["audioUrl"]
-
             _file_path = get_path(data, i, file_path)
             if check_audio(_file_path):
                 print(f"skip audioUrl {_file_path.name}")
                 continue
 
+            audioUrl = i["audioUrl"]
             if audioUrl:
                 print(f"skip audioUrl2 {get_name(data,i)}")
                 print(f"download audio2 {get_name(data,i)}")
@@ -285,14 +284,16 @@ def main(
 
     _d = load_json(file_path)
     data.update(_d)
+    print(f"get  pages {1}/{len(data['pages'])}")
 
     for k, v in enumerate(data["pages"]):
         if k == 0:
             continue
 
         if len(data["data"][k]) > 0:
-            print(f"skip pages {k+1}")
+            print(f"skip pages {k+1}/{len(data['pages'])}")
             continue
+        print(f"get  pages {k+1}/{len(data['pages'])}")
 
         obj = switch_browser(v, callback=callback, mode=mode, file_path=file_path)
         _data = obj.get()
