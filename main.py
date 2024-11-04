@@ -30,6 +30,7 @@ def run_download(request: Request, url):
     response = request.get(url)
     with open(g_file_path, "wb") as f:
         f.write(response.content)
+    print(f"download audio {g_file_path.name}")
 
 
 @request(output=None)
@@ -83,7 +84,11 @@ def callback(url, soup, driver=None, response=None):
         "title": title,
         "chapters_count": chapters_count,
         "check_chapters": False,
+        "check_chapters_count": 0,
         "check_audios": False,
+        "check_audios_count": 0,
+        "check_output": False,
+        "check_output_count": 0,
         "pages": pages,
         "pages_count": pages_count,
         "chapters": chapters,
@@ -134,20 +139,26 @@ def switch_browser(url, callback, mode="browser", file_path=""):
         return run_download(url)
 
 
-def check_count(data):
+def check_count(data, file_path):
     chaptersCount = 0
     audiosCount = 0
+    outputCount = 0
     for i in data["data"]:
         for i in i:
             if "chaptersUrl" in i and len(i["chaptersUrl"]) > 0:
                 chaptersCount += 1
             if "audioUrl" in i and len(i["audioUrl"]) > 0:
                 audiosCount += 1
+            _file_path = get_path(data, i, file_path)
+            if check_audio(_file_path):
+                outputCount += 1
     return {
         "check_chapters": chaptersCount == data["chapters_count"],
         "check_audios": audiosCount == data["chapters_count"],
+        "check_output": outputCount == data["chapters_count"],
         "check_chapters_count": chaptersCount,
         "check_audios_count": audiosCount,
+        "check_output_count": outputCount,
     }
 
 
@@ -178,12 +189,17 @@ def get_name(data, i):
     return name
 
 
-def download(i, data, file_path):
+def get_path(data, i, file_path):
     name = get_name(data, i)
-    file_path = file_path.parent / name
+    return file_path.parent / name
+
+
+def download(i, data, file_path):
+    _file_path = get_path(data, i, file_path)
     audioUrl = i["audioUrl"]
     if audioUrl:
-        download_audio(audioUrl, file_path=file_path)
+        download_audio(audioUrl, file_path=_file_path)
+        data.update(check_count(data, file_path=_file_path))
         save_json(file_path, data)
 
 
@@ -200,7 +216,7 @@ def get_audio(data, file_path, mode):
             i["index"] = count
             count += 1
 
-    _download_audio(data, file_path)
+    _download_audio(data, file_path=file_path)
 
     for i in data["data"]:
         for i in i:
@@ -210,7 +226,9 @@ def get_audio(data, file_path, mode):
                 continue
             chaptersUrl = i["chaptersUrl"]
             if chaptersUrl:
-                obj = switch_browser(chaptersUrl, callback=callback2, mode=mode)
+                obj = switch_browser(
+                    chaptersUrl, callback=callback2, mode=mode, file_path=file_path
+                )
                 result = obj.get()
                 if not result:
                     # raise Exception("error exit app")
@@ -218,7 +236,7 @@ def get_audio(data, file_path, mode):
                 i["audioUrl"] = result["audioUrl"]
                 print(result["audioUrl"])
 
-                data.update(check_count(data))
+                data.update(check_count(data, file_path=file_path))
                 save_json(file_path, data)
 
                 download(i, data, file_path)
@@ -252,14 +270,14 @@ def main(
             print(f"skip pages {k+1}")
             continue
 
-        obj = switch_browser(v, callback=callback, mode=mode)
+        obj = switch_browser(v, callback=callback, mode=mode, file_path=file_path)
         _data = obj.get()
         data["data"][k] = [
             {"chaptersUrl": i["url"], "chaptersTitle": i["title"], "audioUrl": ""}
             for i in _data["chapters"]
         ]
 
-        data.update(check_count(data))
+        data.update(check_count(data, file_path=file_path))
         save_json(file_path, data)
 
     get_audio(data=data, file_path=file_path, mode=mode)
