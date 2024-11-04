@@ -256,7 +256,6 @@ def get_audio(data, file_path, mode):
                     # raise Exception("error exit app")
                     return
                 i["audioUrl"] = result["audioUrl"]
-                print(result["audioUrl"])
 
                 data.update(check_count(data, file_path=file_path))
                 save_json(file_path, data)
