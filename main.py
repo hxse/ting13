@@ -239,14 +239,17 @@ def get_audio(data, file_path, mode):
     for i in data["data"]:
         for i in i:
             audioUrl = i["audioUrl"]
-            if audioUrl:
-                print(f"skip {get_name(data,i)}")
-                continue
-            chaptersUrl = i["chaptersUrl"]
+
             _file_path = get_path(data, i, file_path)
             if check_audio(_file_path):
                 print(f"skip audioUrl {_file_path.name}")
                 continue
+
+            if audioUrl:
+                print(f"skip {get_name(data,i)}")
+                continue
+
+            chaptersUrl = i["chaptersUrl"]
             if chaptersUrl:
                 obj = switch_browser(
                     chaptersUrl, callback=callback2, mode=mode, file_path=file_path
