@@ -238,7 +238,7 @@ def get_audio(data, file_path, mode):
         for i in i:
             _file_path = get_path(data, i, file_path)
             if check_audio(_file_path):
-                print(f"skip audioUrl {_file_path.name}")
+                print(f"skip audioUrl and audioFile {_file_path.name}")
                 continue
 
             audioUrl = i["audioUrl"]
@@ -262,7 +262,9 @@ def get_audio(data, file_path, mode):
                 data.update(check_count(data, file_path=file_path))
                 save_json(file_path, data)
 
-                print(f"download audio {get_name(data,i)}")
+                print(
+                    f"{i['index']}/{data['chapters_count']} download audio {get_name(data,i)} "
+                )
                 download(i, data, file_path)
 
 
