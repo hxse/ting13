@@ -228,13 +228,14 @@ def _download_audio(data, file_path):
 
 
 def get_audio(data, file_path, mode):
-    # _download_audio(data, file_path=file_path)
     count = 0
     for i in data["data"]:
         for i in i:
             count += 1
             i["index"] = count
 
+    for i in data["data"]:
+        for i in i:
             _file_path = get_path(data, i, file_path)
             if check_audio(_file_path):
                 print(f"skip audioUrl {_file_path.name}")
