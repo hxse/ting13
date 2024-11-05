@@ -36,6 +36,7 @@ def get_home_page(driver, data):
         "check_audioUrl_count": 0,
         "check_audioFile": False,
         "check_audioFile_count": 0,
+        "check_repeat": False,
         "pages_count": pages_count,
         "pages": pages,
         "chapters": [chapters, *[[] for i in pages][1:]],

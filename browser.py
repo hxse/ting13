@@ -29,7 +29,7 @@ from tool import check_audio
     lang=Lang.Chinese,
     add_arguments=["--mute-audio"],
     # close_on_crash=True,
-    # raise_exception=False,
+    raise_exception=True,
     tiny_profile=True,
     headless=lambda x: x["headless"],
     profile=lambda x: x["profile"],

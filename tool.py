@@ -81,14 +81,26 @@ def check_count(output_dir, data):
     audioUrlCount = 0
     audioFileCount = 0
     count = 0
+    check_repeat = False
+    chapterUrl_list = []
+    audioUrl_list = []
     for _c in data["chapters"]:
         for chapter in _c:
             count += 1
             chapter["index"] = count
+
             if "chapterUrl" in chapter and len(chapter["chapterUrl"]) > 0:
                 chapterUrlCount += 1
+                if chapter["chapterUrl"] in chapterUrl_list:
+                    check_repeat = True
+                chapterUrl_list.append(chapter["chapterUrl"])
+
             if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
                 audioUrlCount += 1
+                if chapter["audioUrl"] in audioUrl_list:
+                    check_repeat = True
+                audioUrl_list.append(chapter["audioUrl"])
+
             try:
                 audio_path = get_audio_path(output_dir, data, chapter)
                 if check_audio(audio_path):
@@ -104,4 +116,5 @@ def check_count(output_dir, data):
         "check_audioUrl_count": audioUrlCount,
         "check_audioFile": audioFileCount == data["chapters_count"],
         "check_audioFile_count": audioFileCount,
+        "check_repeat": check_repeat,
     }
