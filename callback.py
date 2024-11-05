@@ -53,16 +53,16 @@ def get_audio_page(driver, data):
     audio = soup.select_one("#thisbody audio")
     fix_bug = soup.select_one(".tiquma")
 
-    if "访问过快！过段时间再试！" in fix_bug.text:
-        driver.close()
-        raise Exception("访问过快！过段时间再试！")
-
     if "登录继续收听！" in fix_bug.text:
         print("登录继续收听, 建议关闭headless, 然后手动登录")
         import pdb
 
         pdb.set_trace()
         raise Exception("登录后重启即可")
+
+    if "访问过快！过段时间再试！" in fix_bug.text:
+        driver.close()
+        raise Exception("访问过快！过段时间再试！")
 
     audioUrl = audio["src"]
     return {"chapterUrl": url, "audioUrl": audioUrl}
