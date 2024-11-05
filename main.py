@@ -13,10 +13,9 @@ from tool import (
 )
 from callback import get_home_page, get_audio_page
 from download import run_download
-from pathlib import Path
 
 
-def main(url, headless: bool = False, output_dir: str = download_dir):
+def main(url, headless: bool = True, output_dir: str = download_dir):
     json_file = find_json(url)
     data = load_json(json_file) if json_file else None
 
