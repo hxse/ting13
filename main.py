@@ -43,12 +43,16 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
             data.update(check_count(output_dir, data))
             dump_json(json_file, data)
 
+    count = 0
     for _c in data["chapters"]:
         for chapter in _c:
+            count += 1
             if "chapterUrl" in chapter and len(chapter["chapterUrl"]) > 0:
                 audio_path = get_audio_path(output_dir, data, chapter)
                 if check_audio(audio_path):
-                    print(f"skip audio {audio_path.name}")
+                    print(
+                        f"{count}/{data['chapters_count']} skip audio {audio_path.name}"
+                    )
                     continue
 
                 if not ("audioUrl" in chapter and len(chapter["audioUrl"]) > 0):
@@ -59,11 +63,15 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                     )
                     if "audioUrl" in res and res["audioUrl"]:
                         chapter["audioUrl"] = res["audioUrl"]
-                    print(f"get audioUrl {chapter['audioUrl'].split('/')[-1]}")
+                    print(
+                        f"{count}/{data['chapters_count']} get audioUrl {chapter['audioUrl'].split('/')[-1]}"
+                    )
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
                     run_download(chapter["audioUrl"], audio_path)
-                    print(f"download audio {audio_path.name}")
+                    print(
+                        f"{count}/{data['chapters_count']} download audio {audio_path.name}"
+                    )
 
                 data.update(check_count(output_dir, data))
                 dump_json(json_file, data)
