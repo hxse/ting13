@@ -28,7 +28,7 @@ from tool import check_audio
     # run_async=True,
     lang=Lang.Chinese,
     add_arguments=["--mute-audio"],
-    # close_on_crash=True,
+    close_on_crash=True,
     raise_exception=True,
     tiny_profile=True,
     headless=lambda x: x["headless"],
