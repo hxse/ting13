@@ -3,7 +3,11 @@ from botasaurus.request import request, Request
 from pathlib import Path
 
 
-@request(output=None)
+@request(
+    output=None,
+    close_on_crash=True,
+    raise_exception=True,
+)
 def request_download(request: Request, data):
     file_path = Path(data["file_path"])
     url = data["url"]
