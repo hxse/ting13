@@ -29,9 +29,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
         print(f"get page: 1/{data['pages_count']} {url}")
         data.update(check_count(output_dir, data))
         dump_json(json_file, data)
-    import pdb
 
-    pdb.set_trace()
     assert len(data["pages"]) == len(
         data["chapters"]
     ), f"数量不相等 pages: {len(data['pages'])} chapters: {len(data['chapters'])}"
@@ -51,13 +49,6 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
         for chapter in _c:
             count += 1
             if "chapterUrl" in chapter and len(chapter["chapterUrl"]) > 0:
-                audio_path = get_audio_path(output_dir, data, chapter)
-                if check_audio(audio_path):
-                    print(
-                        f"{count}/{data['chapters_count']} skip audio {audio_path.name}"
-                    )
-                    continue
-
                 if not ("audioUrl" in chapter and len(chapter["audioUrl"]) > 0):
                     res = run_browser(
                         chapter["chapterUrl"],
@@ -71,6 +62,13 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                     )
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
+                    audio_path = get_audio_path(output_dir, data, chapter)
+                    if check_audio(audio_path):
+                        print(
+                            f"{count}/{data['chapters_count']} skip audio {audio_path.name}"
+                        )
+                        continue
+
                     run_download(chapter["audioUrl"], audio_path)
                     print(
                         f"{count}/{data['chapters_count']} download audio {audio_path.name}"

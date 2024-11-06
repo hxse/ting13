@@ -55,11 +55,8 @@ def check_audio(file_path):
 def get_name(data, chapter):
     index = len(str(data["chapters_count"]))
     fill_index = str(chapter["index"]).zfill(index)
-    suffix = (
-        chapter["audioUrl"].split(".")[-1]
-        if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0
-        else "m4a"
-    )
+    suffix = chapter["audioUrl"].split(".")[-1]
+
     name = sanitize_filename(f"{fill_index} {chapter['chapterTitle']}.{suffix}")
     return name
 
