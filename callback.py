@@ -11,11 +11,12 @@ def get_home_page(driver, data):
     """
     url = data["url"]
     driver.get(url)
+    driver.wait_for_element("h1", wait=Wait.LONG)
     driver.sleep(2)
     soup = soupify(driver)
 
     domain = get_domain(url)
-    title = soup.select("h1")[0].text.strip("有声小说")
+    title = soup.select_one("h1").text.strip("有声小说")
     playlist = soup.select("#playlist li a")
     chapters = [
         {"chapterUrl": domain + i["href"], "chapterTitle": i.text} for i in playlist

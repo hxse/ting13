@@ -18,8 +18,9 @@ from download import run_download
 def main(url, headless: bool = True, output_dir: str = download_dir):
     json_file = find_json(url)
     data = load_json(json_file) if json_file else None
-
-    if not data:
+    if data:
+        output_dir = get_output_dir(data, url, output_dir)
+    else:
         print(f"get home page {url}")
         data = run_browser(url, callback=get_home_page, headless=headless)
         output_dir = get_output_dir(data, url, output_dir)
@@ -28,9 +29,9 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
         print(f"get page: 1/{data['pages_count']} {url}")
         data.update(check_count(output_dir, data))
         dump_json(json_file, data)
+    import pdb
 
-    output_dir = get_output_dir(data, url, output_dir)
-
+    pdb.set_trace()
     assert len(data["pages"]) == len(
         data["chapters"]
     ), f"数量不相等 pages: {len(data['pages'])} chapters: {len(data['chapters'])}"
