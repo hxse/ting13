@@ -47,7 +47,7 @@ def get_home_page(driver, data):
 def get_audio_page(driver, data):
     url = data["url"]
     driver.get(url)
-    driver.wait_for_element("#thisbody", wait=Wait.SHORT)
+    driver.wait_for_element("#thisbody", wait=Wait.LONG)
     driver.sleep(4)
     soup = soupify(driver)
 
