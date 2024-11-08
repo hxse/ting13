@@ -62,7 +62,7 @@ def get_audio_page(driver, data):
         raise Exception("登录后重启即可")
 
     if "访问过快！过段时间再试！" in fix_bug.text:
-        driver.close()
+        # driver.close()
         raise Exception("访问过快！过段时间再试！")
 
     audioUrl = audio["src"]
