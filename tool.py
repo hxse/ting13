@@ -1,6 +1,8 @@
 from pathlib import Path
 import json
 from pathvalidate import sanitize_filename
+import base64
+from imageinterminal import display_image
 
 
 def get_domain(url: str):
@@ -35,6 +37,16 @@ def dump_json(json_file, data):
     json_file.parent.mkdir(parents=True, exist_ok=True)
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+
+def dump_img(path, data):
+    with open(path, "wb") as f:
+        f.write(base64.b64decode(data))
+    display_image(path.as_posix())
+
+
+def get_verify(path, name="verify.jpg"):
+    return path / name
 
 
 def get_output_dir(data, url, output_dir):

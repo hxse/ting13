@@ -54,6 +54,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                         chapter["chapterUrl"],
                         callback=get_audio_page,
                         headless=headless,
+                        output_dir=output_dir,
                     )
                     if "audioUrl" in res and res["audioUrl"]:
                         chapter["audioUrl"] = res["audioUrl"]

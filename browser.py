@@ -41,7 +41,9 @@ def browser_driver(driver: Driver, data):
     return data["callback"](driver, data)
 
 
-def run_browser(url, callback: any = get_home_page, headless: bool = False):
+def run_browser(
+    url, callback: any = get_home_page, headless: bool = False, output_dir: str = ""
+):
     """
     目前用不着两个profile, 一个就行了
     """
@@ -54,6 +56,7 @@ def run_browser(url, callback: any = get_home_page, headless: bool = False):
             "user_agent": UserAgent.HASHED,
             "window_size": WindowSize.HASHED,
             "proxy": "http://127.0.0.1:7890",
+            "output_dir": output_dir,
         },
         {
             "url": url,
@@ -63,6 +66,7 @@ def run_browser(url, callback: any = get_home_page, headless: bool = False):
             "user_agent": UserAgent.HASHED,
             "window_size": WindowSize.HASHED,
             "proxy": "http://127.0.0.1:7890",
+            "output_dir": output_dir,
         },
     ][0]
     return browser_driver(user_profile)
