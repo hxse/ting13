@@ -82,7 +82,15 @@ def login(driver, _p, soup, url):
     return top[-1].text == "退出登陆"
 
 
-def get_audio_page(driver, data):
+def get_audio_page(driver, data, retry=1, retry2=1):
+    _max = 3
+    if retry > _max or retry2 > _max:
+        raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
+    if retry > 1:
+        print(f"retry getAudioUrl {retry}/{_max}")
+    if retry2 > 1:
+        print(f"retry login {retry2}/{_max}")
+
     url = data["url"]
     driver.get(url)
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
@@ -93,20 +101,19 @@ def get_audio_page(driver, data):
     fix_bug = soup.select_one(".tiquma")
     if "登录继续收听！" in fix_bug.text:
         print("登录继续收听, 建议关闭headless, 然后手动登录")
-        _max = 3
-        for i in range(_max):
-            print(f"login {i+1}/{_max}")
-            _p = get_verify(data["output_dir"])
-            if login(driver, _p, soup, url):
-                print("login success")
-                if _p.is_file():
-                    _p.unlink()
-                return get_audio_page(driver, data)
-        raise Exception(f"帐号密码输入错误已超过{_max}次")
+        _p = get_verify(data["output_dir"])
+        if login(driver, _p, soup, url):
+            print("login success")
+            if _p.is_file():
+                _p.unlink()
+            return get_audio_page(driver, data)
+        return get_audio_page(driver, data, retry2=retry2 + 1)
 
     if "访问过快！过段时间再试！" in fix_bug.text:
-        # driver.close()
         raise Exception("访问过快！过段时间再试！")
 
-    audioUrl = audio["src"]
-    return {"chapterUrl": url, "audioUrl": audioUrl}
+    try:
+        audioUrl = audio["src"]
+        return {"chapterUrl": url, "audioUrl": audioUrl}
+    except KeyError:
+        return get_audio_page(driver, data, retry=retry + 1)
