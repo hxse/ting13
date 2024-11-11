@@ -115,5 +115,6 @@ def get_audio_page(driver, data, retry=1, retry2=1):
     try:
         audioUrl = audio["src"]
         return {"chapterUrl": url, "audioUrl": audioUrl}
-    except KeyError:
+    except (KeyError, TypeError) as e:
+        print(e)
         return get_audio_page(driver, data, retry=retry + 1)
