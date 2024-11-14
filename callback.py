@@ -21,6 +21,7 @@ def get_home_page(driver, data):
     chapters = [
         {"chapterUrl": domain + i["href"], "chapterTitle": i.text} for i in playlist
     ]
+    assert len(chapters) != 0, f"chapters: {len(chapters)}"
     _c = soup.select(".hd-sel option")
     _count = re.sub("[\u4e00-\u9fa5]", "", _c[-1].text)
     chapters_count = int(_count.split(" ")[-1])
