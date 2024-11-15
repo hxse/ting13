@@ -1,20 +1,39 @@
 from tool import check_audio, download_dir
 from botasaurus.request import request, Request
+from botasaurus_requests.exceptions import ClientException
+
 from pathlib import Path
 
 
-@request(output=None, close_on_crash=True, raise_exception=True, max_retry=3)
+@request(
+    output=None,
+    close_on_crash=True,
+    raise_exception=True,
+)
 def request_download(request: Request, data):
-    print(f"run download: {data['url'].split('/')[-1]}")
-    file_path = Path(data["file_path"])
-    url = data["url"]
-    if check_audio(file_path):
-        print(f"skip audio {file_path.name}")
-        return
+    def _(retry=1):
+        _max = 3
+        if retry > _max:
+            raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
+        elif retry > 1:
+            print(f"retry download audio {retry}/{_max}")
+        else:
+            print(f"run download audio {data['url'].split('/')[-1]}")
 
-    response = request.get(url)
-    with open(file_path, "wb") as f:
-        f.write(response.content)
+        file_path = Path(data["file_path"])
+        url = data["url"]
+        if check_audio(file_path):
+            print(f"skip audio {file_path.name}")
+            return
+        try:
+            response = request.get(url)
+        except ClientException as e:
+            print(e)
+            return _(retry=retry + 1)
+        with open(file_path, "wb") as f:
+            f.write(response.content)
+
+    _()
 
 
 def run_download(url: str, file_path: str):

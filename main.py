@@ -59,7 +59,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                     if "audioUrl" in res and res["audioUrl"]:
                         chapter["audioUrl"] = res["audioUrl"]
                     print(
-                        f"{count}/{data['chapters_count']} get audioUrl {chapter['audioUrl'].split('/')[-1]}"
+                        f"{count}/{data['chapters_count']} success get audioUrl {chapter['audioUrl'].split('/')[-1]}"
                     )
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
@@ -72,7 +72,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
 
                     run_download(chapter["audioUrl"], audio_path)
                     print(
-                        f"{count}/{data['chapters_count']} download audio {audio_path.name}"
+                        f"{count}/{data['chapters_count']} success download audio {audio_path.name}"
                     )
 
                 data.update(check_count(output_dir, data))

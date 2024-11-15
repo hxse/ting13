@@ -87,13 +87,20 @@ def get_audio_page(driver, data, retry=1, retry2=1):
     _max = 3
     if retry > _max or retry2 > _max:
         raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
-    if retry > 1:
+    elif retry > 1:
         print(f"retry getAudioUrl {retry}/{_max}")
-    if retry2 > 1:
+    elif retry2 > 1:
         print(f"retry login {retry2}/{_max}")
+    else:
+        print(f"run getAudioUrl {data['url'].split('/')[-1]}")
 
     url = data["url"]
-    driver.get(url)
+    try:
+        driver.get(url)
+    except TimeoutError as e:
+        print(e)
+        return get_audio_page(driver, data, retry=retry + 1)
+
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
     driver.sleep(3)
     soup = soupify(driver)
