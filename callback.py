@@ -2,6 +2,7 @@ from botasaurus.soupify import soupify
 from botasaurus.browser import Wait
 from tool import get_domain, get_output_dir, dump_img, get_verify
 import re
+from rich import print
 
 
 def get_home_page(driver, data):
@@ -87,17 +88,17 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if retry > _max or retry2 > _max:
         raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
     elif retry > 1:
-        print(f"retry getAudioUrl {retry}/{_max}")
+        print(f"[bold yellow]retry getAudioUrl[/] {retry}/{_max}")
     elif retry2 > 1:
-        print(f"retry login {retry2}/{_max}")
+        print(f"[bold yellow]retry login[/] {retry2}/{_max}")
     else:
-        print(f"run getAudioUrl {data['url'].split('/')[-1]}")
+        print(f"[bold orange]run getAudioUrl[/] {data['url'].split('/')[-1]}")
 
     url = data["url"]
     try:
         driver.get(url)
     except TimeoutError as e:
-        print(e)
+        print(f"[bold red]{e}[/]")
         return get_audio_page(driver, data, retry=retry + 1)
 
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
@@ -107,10 +108,10 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     audio = soup.select_one("#thisbody audio")
     fix_bug = soup.select_one(".tiquma")
     if "登录继续收听！" in fix_bug.text:
-        print("登录继续收听, 建议关闭headless, 然后手动登录")
+        print("[bold red]登录继续收听, 建议关闭headless, 然后手动登录[/]")
         _p = get_verify(data["output_dir"])
         if login(driver, _p, soup, url):
-            print("login success")
+            print("[bold green]login success[/]")
             if _p.is_file():
                 _p.unlink()
             return get_audio_page(driver, data)
@@ -123,5 +124,5 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
         audioUrl = audio["src"]
         return {"chapterUrl": url, "audioUrl": audioUrl}
     except (KeyError, TypeError) as e:
-        print(e)
+        print(f"[bold red]{e}[/]")
         return get_audio_page(driver, data, retry=retry + 1)

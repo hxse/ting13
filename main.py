@@ -13,6 +13,7 @@ from tool import (
 )
 from callback import get_home_page, get_audio_page
 from download import run_download
+from rich import print
 
 
 def main(url, headless: bool = True, output_dir: str = download_dir):
@@ -21,12 +22,12 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
     if data:
         output_dir = get_output_dir(data, url, output_dir)
     else:
-        print(f"get home page {url}")
+        print(f"[bold orange]get home page:[/] {url}")
         data = run_browser(url, callback=get_home_page, headless=headless)
         output_dir = get_output_dir(data, url, output_dir)
         json_file = get_output_json(output_dir)
 
-        print(f"get page: 1/{data['pages_count']} {url}")
+        print(f"[bold orange]get page:[/] 1/{data['pages_count']} {url}")
         data.update(check_count(output_dir, data))
         dump_json(json_file, data)
 
@@ -40,7 +41,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
             res = run_browser(url, callback=get_home_page, headless=headless)
             data["chapters"][k] = res["chapters"][0]
 
-            print(f"get page: {k+1}/{data['pages_count']} {url}")
+            print(f"[bold orange]get page:[/] {k+1}/{data['pages_count']} {url}")
             data.update(check_count(output_dir, data))
             dump_json(json_file, data)
 
@@ -59,20 +60,20 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                     if "audioUrl" in res and res["audioUrl"]:
                         chapter["audioUrl"] = res["audioUrl"]
                     print(
-                        f"{count}/{data['chapters_count']} success get audioUrl {chapter['audioUrl'].split('/')[-1]}"
+                        f"{count}/{data['chapters_count']} [bold green]success get audioUrl[/] {chapter['audioUrl'].split('/')[-1]}"
                     )
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
                     audio_path = get_audio_path(output_dir, data, chapter)
                     if check_audio(audio_path):
                         print(
-                            f"{count}/{data['chapters_count']} skip audio {audio_path.name}"
+                            f"{count}/{data['chapters_count']} [bold green]skip audio[/] {audio_path.name}"
                         )
                         continue
 
                     run_download(chapter["audioUrl"], audio_path)
                     print(
-                        f"{count}/{data['chapters_count']} success download audio {audio_path.name}"
+                        f"{count}/{data['chapters_count']} [bold green]success download audio[/] {audio_path.name}"
                     )
 
                 data.update(check_count(output_dir, data))

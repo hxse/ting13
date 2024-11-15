@@ -909,6 +909,7 @@ dependencies = [
     { name = "chrome-extension-python" },
     { name = "image-in-terminal" },
     { name = "pathvalidate" },
+    { name = "rich" },
     { name = "typer" },
 ]
 
@@ -918,6 +919,7 @@ requires-dist = [
     { name = "chrome-extension-python", specifier = ">=1.0.1" },
     { name = "image-in-terminal", specifier = ">=1.2.6" },
     { name = "pathvalidate", specifier = ">=3.2.1" },
+    { name = "rich", specifier = ">=13.9.4" },
     { name = "typer", specifier = ">=0.12.5" },
 ]
 
