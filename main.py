@@ -22,12 +22,12 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
     if data:
         output_dir = get_output_dir(data, url, output_dir)
     else:
-        print(f"[bold orange]get home page:[/] {url}")
+        print(f"[bold orange1]get home page:[/] {url}")
         data = run_browser(url, callback=get_home_page, headless=headless)
         output_dir = get_output_dir(data, url, output_dir)
         json_file = get_output_json(output_dir)
 
-        print(f"[bold orange]get page:[/] 1/{data['pages_count']} {url}")
+        print(f"[bold orange1]success get page:[/] 1/{data['pages_count']} {url}")
         data.update(check_count(output_dir, data))
         dump_json(json_file, data)
 
@@ -41,7 +41,9 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
             res = run_browser(url, callback=get_home_page, headless=headless)
             data["chapters"][k] = res["chapters"][0]
 
-            print(f"[bold orange]get page:[/] {k+1}/{data['pages_count']} {url}")
+            print(
+                f"[bold orange1]success get page:[/] {k+1}/{data['pages_count']} {url}"
+            )
             data.update(check_count(output_dir, data))
             dump_json(json_file, data)
 
