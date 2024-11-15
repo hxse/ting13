@@ -17,7 +17,9 @@ def request_download(request: Request, data):
         elif retry > 1:
             print(f"[bold yellow]retry download audio[/] {retry}/{_max}")
         else:
-            print(f"[bold orange1]run download audio[/] {data['url'].split('/')[-1]}")
+            print(
+                f"[bold sandy_brown]run download audio[/] {data['url'].split('/')[-1]}"
+            )
 
         file_path = Path(data["file_path"])
         url = data["url"]

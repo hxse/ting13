@@ -92,7 +92,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     elif retry2 > 1:
         print(f"[bold yellow]retry login[/] {retry2}/{_max}")
     else:
-        print(f"[bold orange1]run getAudioUrl[/] {data['url'].split('/')[-1]}")
+        print(f"[bold sandy_brown]run getAudioUrl[/] {data['url'].split('/')[-1]}")
 
     url = data["url"]
     try:
