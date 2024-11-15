@@ -15,9 +15,9 @@ def request_download(request: Request, data):
         if retry > _max:
             raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
         elif retry > 1:
-            print(f"[bold orange1]retry download audio[/] {retry}/{_max}")
+            print(f"[bold yellow]retry download audio[/] {retry}/{_max}")
         else:
-            print(f"[bold yellow]run download audio[/] {data['url'].split('/')[-1]}")
+            print(f"[bold orange1]run download audio[/] {data['url'].split('/')[-1]}")
 
         file_path = Path(data["file_path"])
         url = data["url"]

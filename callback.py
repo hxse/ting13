@@ -88,11 +88,11 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if retry > _max or retry2 > _max:
         raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
     elif retry > 1:
-        print(f"[bold orange1]retry getAudioUrl[/] {retry}/{_max}")
+        print(f"[bold yellow]retry getAudioUrl[/] {retry}/{_max}")
     elif retry2 > 1:
-        print(f"[bold orange1]retry login[/] {retry2}/{_max}")
+        print(f"[bold yellow]retry login[/] {retry2}/{_max}")
     else:
-        print(f"[bold yellow]run getAudioUrl[/] {data['url'].split('/')[-1]}")
+        print(f"[bold orange1]run getAudioUrl[/] {data['url'].split('/')[-1]}")
 
     url = data["url"]
     try:
