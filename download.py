@@ -3,12 +3,9 @@ from botasaurus.request import request, Request
 from pathlib import Path
 
 
-@request(
-    output=None,
-    close_on_crash=True,
-    raise_exception=True,
-)
+@request(output=None, close_on_crash=True, raise_exception=True, max_retry=3)
 def request_download(request: Request, data):
+    print(f"run download: {data['url'].split('/')[-1]}")
     file_path = Path(data["file_path"])
     url = data["url"]
     if check_audio(file_path):
