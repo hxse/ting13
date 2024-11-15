@@ -83,8 +83,7 @@ def login(driver, _p, soup, url):
     return top[-1].text == "退出登陆"
 
 
-def get_audio_page(driver, data, retry=1, retry2=1):
-    _max = 3
+def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if retry > _max or retry2 > _max:
         raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
     elif retry > 1:
