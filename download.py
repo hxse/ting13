@@ -11,8 +11,7 @@ from pathlib import Path
     raise_exception=True,
 )
 def request_download(request: Request, data):
-    def _(retry=1):
-        _max = 3
+    def _(_max=3, retry=1):
         if retry > _max:
             raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
         elif retry > 1:
@@ -33,7 +32,7 @@ def request_download(request: Request, data):
         with open(file_path, "wb") as f:
             f.write(response.content)
 
-    _()
+    return _()
 
 
 def run_download(url: str, file_path: str):
