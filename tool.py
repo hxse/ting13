@@ -3,6 +3,7 @@ import json
 from pathvalidate import sanitize_filename
 import base64
 from imageinterminal import display_image
+from time import time, sleep
 
 
 def get_domain(url: str):
@@ -127,3 +128,18 @@ def check_count(output_dir, data):
         "check_audioFile_count": audioFileCount,
         "check_repeat": check_repeat,
     }
+
+
+def check_state(driver, timeout=10):
+    start = time()
+    while 1:
+        end = time()
+        print(end - start)
+        if end - start > timeout:
+            raise TimeoutError(f"TimeoutError {timeout}")
+
+        sleep(0.5)
+        # resTitle = driver.run_js("return document.title")
+        resState = driver.run_js("return document.readyState")
+        if resState == "complete":
+            break

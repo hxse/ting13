@@ -19,8 +19,8 @@ from tool import check_audio
 @browser(
     extensions=[
         Extension(
-            "https://chromewebstore.google.com/detail/adblock-%E2%80%94-best-ad-blocker/gighmmpiobklfepjocnamgkkbiglidom"
-            # "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm"
+            # "https://chromewebstore.google.com/detail/adblock-%E2%80%94-best-ad-blocker/gighmmpiobklfepjocnamgkkbiglidom"
+            "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm"
         )
     ],
     output=None,
@@ -36,7 +36,7 @@ from tool import check_audio
     user_agent=lambda x: x["user_agent"],
     window_size=lambda x: x["window_size"],
     proxy=lambda x: x["proxy"],
-    wait_for_complete_page_load=True,
+    wait_for_complete_page_load=False,
 )
 def browser_driver(driver: Driver, data):
     return data["callback"](driver, data)
@@ -58,7 +58,8 @@ def run_browser(
             "window_size": WindowSize.HASHED,
             "proxy": "http://127.0.0.1:7890",
             "output_dir": output_dir,
-            "waitTime": 30,
+            "waitTime": 2,
+            "timeout": 120,
         },
         {
             "url": url,
@@ -69,7 +70,8 @@ def run_browser(
             "window_size": WindowSize.HASHED,
             "proxy": "http://127.0.0.1:7890",
             "output_dir": output_dir,
-            "waitTime": 30,
+            "waitTime": 2,
+            "timeout": 120,
         },
     ][0]
     return browser_driver(user_profile)

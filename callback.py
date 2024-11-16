@@ -1,6 +1,6 @@
 from botasaurus.soupify import soupify
 from botasaurus.browser import Wait
-from tool import get_domain, get_output_dir, dump_img, get_verify
+from tool import get_domain, get_output_dir, dump_img, get_verify, check_state
 import re
 from rich import print
 
@@ -97,6 +97,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     url = data["url"]
     try:
         driver.get(url, wait=data["waitTime"])
+        check_state(driver, timeout=data["timeout"])
     except TimeoutError as e:
         print(f"[bold red]{e}[/]")
         return get_audio_page(driver, data, retry=retry + 1)
