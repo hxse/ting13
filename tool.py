@@ -134,7 +134,6 @@ def check_state(driver, timeout=10):
     start = time()
     while 1:
         end = time()
-        print(end - start)
         if end - start > timeout:
             raise TimeoutError(f"TimeoutError {timeout}")
 
@@ -142,4 +141,5 @@ def check_state(driver, timeout=10):
         # resTitle = driver.run_js("return document.title")
         resState = driver.run_js("return document.readyState")
         if resState == "complete":
+            print(f"document complete {end - start}/{timeout}")
             break

@@ -12,8 +12,8 @@ def get_home_page(driver, data):
     """
     url = data["url"]
     driver.get(url, wait=data["waitTime"])
+    check_state(driver, timeout=data["timeout"])
     driver.wait_for_element("h1", wait=Wait.LONG)
-    driver.sleep(2)
     soup = soupify(driver)
 
     domain = get_domain(url)
@@ -103,7 +103,6 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
         return get_audio_page(driver, data, retry=retry + 1)
 
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
-    driver.sleep(3)
     soup = soupify(driver)
 
     audio = soup.select_one("#thisbody audio")
