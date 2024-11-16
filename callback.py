@@ -11,7 +11,7 @@ def get_home_page(driver, data):
     提取章节目录url
     """
     url = data["url"]
-    driver.get(url)
+    driver.get(url, wait=data["waitTime"])
     driver.wait_for_element("h1", wait=Wait.LONG)
     driver.sleep(2)
     soup = soupify(driver)
@@ -46,9 +46,9 @@ def get_home_page(driver, data):
     }
 
 
-def login(driver, _p, soup, url):
+def login(driver, _p, soup, url, waitTime):
     loginUrl = soup.select_one(".tiquma a")["href"]
-    driver.get(get_domain(url) + loginUrl)
+    driver.get(get_domain(url) + loginUrl, wait=waitTime)
     driver.wait_for_element(".verify", wait=Wait.LONG)
     driver.sleep(2)
 
@@ -96,7 +96,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
 
     url = data["url"]
     try:
-        driver.get(url)
+        driver.get(url, wait=data["waitTime"])
     except TimeoutError as e:
         print(f"[bold red]{e}[/]")
         return get_audio_page(driver, data, retry=retry + 1)
@@ -110,7 +110,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if "登录继续收听！" in fix_bug.text:
         print("[bold red]登录继续收听, 建议关闭headless, 然后手动登录[/]")
         _p = get_verify(data["output_dir"])
-        if login(driver, _p, soup, url):
+        if login(driver, _p, soup, url, data["waitTime"]):
             print("[bold green]login success[/]")
             if _p.is_file():
                 _p.unlink()
