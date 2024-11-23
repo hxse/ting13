@@ -4,6 +4,8 @@ from pathvalidate import sanitize_filename
 import base64
 from imageinterminal import display_image
 from time import time, sleep
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 
 def get_domain(url: str):
@@ -65,17 +67,17 @@ def check_audio(file_path):
     )
 
 
-def get_name(data, chapter):
-    index = len(str(data["chapters_count"]))
-    fill_index = str(chapter["index"]).zfill(index)
+def get_name(data, chapter, idx):
+    count_len = len(str(data["chapters_count"]))
+    fill_index = str(idx).zfill(count_len)
     suffix = chapter["audioUrl"].split(".")[-1]
 
     name = sanitize_filename(f"{fill_index} {chapter['chapterTitle']}.{suffix}")
     return name
 
 
-def get_audio_path(output_dir, data, chapter):
-    return output_dir / get_name(data, chapter)
+def get_audio_path(output_dir, data, chapter, idx):
+    return output_dir / get_name(data, chapter, idx)
 
 
 def print_data(data):
@@ -90,11 +92,12 @@ def check_count(output_dir, data):
     chapterUrlCount = 0
     audioUrlCount = 0
     audioFileCount = 0
-    count = 0
     check_repeat = False
     chapterUrl_list = []
     audioUrl_list = []
-    for _c in data["chapters"]:
+
+    for i, _c in enumerate(data["chapters"]):
+        count = 48 * i
         for chapter in _c:
             count += 1
             chapter["index"] = count
@@ -112,7 +115,7 @@ def check_count(output_dir, data):
                 audioUrl_list.append(chapter["audioUrl"])
 
             try:
-                audio_path = get_audio_path(output_dir, data, chapter)
+                audio_path = get_audio_path(output_dir, data, chapter, idx=count)
                 if check_audio(audio_path):
                     audioFileCount += 1
             except KeyError:
@@ -144,3 +147,11 @@ def check_state(driver, timeout=10):
         if resState == "complete":
             print(f"document complete {end - start}/{timeout}")
             break
+
+
+def parse_url(url, key_name):
+    parsed_url = urlparse(url)
+    try:
+        return parse_qs(parsed_url.query)[key_name][0]
+    except KeyError:
+        return None

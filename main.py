@@ -10,13 +10,26 @@ from tool import (
     get_audio_path,
     check_count,
     check_audio,
+    parse_url,
 )
 from callback import get_home_page, get_audio_page
 from download import run_download
 from rich import print
 
 
-def main(url, headless: bool = True, output_dir: str = download_dir):
+def main(
+    url,
+    headless: bool = True,
+    output_dir: str = download_dir,
+    page: None | int = None,
+    c_min: None | int = None,
+    c_max: None | int = None,
+):
+    """
+    page: 指定章节页面
+    c_min: 当前页面最小章节数, 留空下载当前页面所有章节
+    c_max: 当前页面最大章节数, 留空下载当前页面所有章节
+    """
     json_file = find_json(url)
     data = load_json(json_file) if json_file else None
     if data:
@@ -38,6 +51,13 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
     for k, v in enumerate(data["chapters"]):
         if len(v) == 0:
             url = data["pages"][k]
+
+            p = parse_url(url, "p")
+            if p and page is not None:
+                if int(p) != int(page):
+                    print(f"[bold green]skip specify page {p}[/]")
+                    continue
+
             res = run_browser(url, callback=get_home_page, headless=headless)
             data["chapters"][k] = res["chapters"][0]
 
@@ -47,10 +67,16 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
             data.update(check_count(output_dir, data))
             dump_json(json_file, data)
 
-    count = 0
-    for _c in data["chapters"]:
+    for i, _c in enumerate(data["chapters"]):
+        count = 48 * i
         for chapter in _c:
             count += 1
+
+            if c_min is not None and c_max is not None:
+                if count < c_min or count > c_max:
+                    print(f"[bold green]skip specify chapter {count}[/]")
+                    continue
+
             if "chapterUrl" in chapter and len(chapter["chapterUrl"]) > 0:
                 if not ("audioUrl" in chapter and len(chapter["audioUrl"]) > 0):
                     res = run_browser(
@@ -66,7 +92,7 @@ def main(url, headless: bool = True, output_dir: str = download_dir):
                     )
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
-                    audio_path = get_audio_path(output_dir, data, chapter)
+                    audio_path = get_audio_path(output_dir, data, chapter, idx=count)
                     if check_audio(audio_path):
                         print(
                             f"{count}/{data['chapters_count']} [bold green]skip audio[/] {audio_path.name}"
