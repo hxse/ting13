@@ -123,7 +123,9 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     try:
         audioUrl = audio["src"]
         if "mp3m.ysxs.top" not in audioUrl:
-            raise RuntimeError(f"mp3m.ysxs.top not in {audioUrl}")
+            raise RuntimeError(
+                f"检测到蜜罐连接, 建议更换ip, mp3m.ysxs.top not in {audioUrl}"
+            )
         return {"chapterUrl": url, "audioUrl": audioUrl}
     except (KeyError, TypeError) as e:
         print(f"[bold red]{e}[/]")
