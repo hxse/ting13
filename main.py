@@ -1,3 +1,4 @@
+import monkey_patch
 from browser import run_browser
 import typer
 from tool import (
