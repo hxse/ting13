@@ -155,3 +155,10 @@ def parse_url(url, key_name):
         return parse_qs(parsed_url.query)[key_name][0]
     except KeyError:
         return None
+
+
+def get_meta_data(driver):
+    return {
+        "cookies": driver.get_cookies_dict(),
+        "headers": {"User-Agent": driver.user_agent},
+    }

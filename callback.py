@@ -1,6 +1,13 @@
 from botasaurus.soupify import soupify
 from botasaurus.browser import Wait
-from tool import get_domain, get_output_dir, dump_img, get_verify, check_state
+from tool import (
+    get_domain,
+    get_output_dir,
+    dump_img,
+    get_verify,
+    check_state,
+    get_meta_data,
+)
 import re
 from rich import print
 
@@ -29,21 +36,24 @@ def get_home_page(driver, data):
     pages = [domain + i["value"] for i in _c]
     pages_count = len(pages)
 
-    return {
-        "url": url,
-        "title": title,
-        "chapters_count": chapters_count,
-        "check_chapterUrl": False,
-        "check_chapterUrl_count": 0,
-        "check_audioUrl": False,
-        "check_audioUrl_count": 0,
-        "check_audioFile": False,
-        "check_audioFile_count": 0,
-        "check_repeat": False,
-        "pages_count": pages_count,
-        "pages": pages,
-        "chapters": [chapters, *[[] for i in pages][1:]],
-    }
+    return [
+        {
+            "url": url,
+            "title": title,
+            "chapters_count": chapters_count,
+            "check_chapterUrl": False,
+            "check_chapterUrl_count": 0,
+            "check_audioUrl": False,
+            "check_audioUrl_count": 0,
+            "check_audioFile": False,
+            "check_audioFile_count": 0,
+            "check_repeat": False,
+            "pages_count": pages_count,
+            "pages": pages,
+            "chapters": [chapters, *[[] for i in pages][1:]],
+        },
+        get_meta_data(driver),
+    ]
 
 
 def login(driver, _p, soup, url, waitTime):
@@ -126,7 +136,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
             raise RuntimeError(
                 f"检测到蜜罐url, 建议更换ip, .ysxs.top not in {audioUrl}"
             )
-        return {"chapterUrl": url, "audioUrl": audioUrl}
+        return [{"chapterUrl": url, "audioUrl": audioUrl}, get_meta_data(driver)]
     except (KeyError, TypeError) as e:
         print(f"[bold red]{e}[/]")
         return get_audio_page(driver, data, retry=retry + 1)

@@ -37,7 +37,8 @@ def main(
         output_dir = get_output_dir(data, url, output_dir)
     else:
         print(f"[bold orange1]get home page:[/] {url}")
-        data = run_browser(url, callback=get_home_page, headless=headless)
+        [data, meta_data] = run_browser(url, callback=get_home_page, headless=headless)
+        data["meta_data"] = meta_data
         output_dir = get_output_dir(data, url, output_dir)
         json_file = get_output_json(output_dir)
 
@@ -59,7 +60,10 @@ def main(
                     print(f"[bold green]skip specify page {p}[/]")
                     continue
 
-            res = run_browser(url, callback=get_home_page, headless=headless)
+            [res, meta_data] = run_browser(
+                url, callback=get_home_page, headless=headless
+            )
+            data["meta_data"] = meta_data
             data["chapters"][k] = res["chapters"][0]
 
             print(
@@ -80,12 +84,13 @@ def main(
 
             if "chapterUrl" in chapter and len(chapter["chapterUrl"]) > 0:
                 if not ("audioUrl" in chapter and len(chapter["audioUrl"]) > 0):
-                    res = run_browser(
+                    [res, meta_data] = run_browser(
                         chapter["chapterUrl"],
                         callback=get_audio_page,
                         headless=headless,
                         output_dir=output_dir,
                     )
+                    data["meta_data"] = meta_data
                     if "audioUrl" in res and res["audioUrl"]:
                         chapter["audioUrl"] = res["audioUrl"]
                     print(
@@ -100,7 +105,12 @@ def main(
                         )
                         continue
 
-                    run_download(chapter["audioUrl"], audio_path)
+                    run_download(
+                        chapter["audioUrl"],
+                        audio_path,
+                        cookies=data["meta_data"].get("cookies", {}),
+                        headers=data["meta_data"].get("headers", {}),
+                    )
                     print(
                         f"{count}/{data['chapters_count']} [bold green]success download audio[/] {audio_path.name}"
                     )

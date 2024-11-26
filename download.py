@@ -20,14 +20,15 @@ def request_download(request: Request, data):
             print(
                 f"[bold sandy_brown]run download audio[/] {data['url'].split('/')[-1]}"
             )
-
         file_path = Path(data["file_path"])
         url = data["url"]
         if check_audio(file_path):
             print(f"[bold blue]skip audio[/] {file_path.name}")
             return
         try:
-            response = request.get(url)
+            response = request.get(
+                url, cookies=data["cookies"], headers=data["headers"]
+            )
         except ClientException as e:
             print(f"[bold red]{e}[/]")
             return _(retry=retry + 1)
@@ -37,14 +38,14 @@ def request_download(request: Request, data):
     return _()
 
 
-def run_download(url: str, file_path: str):
+def run_download(
+    url: str,
+    file_path: str,
+    cookies: dict,
+    headers: dict,
+):
     request_download(
-        [
-            {
-                "url": url,
-                "file_path": file_path,
-            }
-        ][0]
+        {"url": url, "file_path": file_path, "cookies": cookies, "headers": headers}
     )
 
 
