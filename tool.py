@@ -19,6 +19,14 @@ def get_id(url):
     return url.split("?")[0].strip("/").split("/")[-1]
 
 
+def check_fake_url(url, white_list=[".dnse.top", ".ysxs.top"]):
+    flag = False
+    for s in white_list:
+        if s in url:
+            flag = True
+    return flag
+
+
 def find_json(url):
     _id = get_id(url)
     for i in download_dir.glob("*"):

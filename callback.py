@@ -7,6 +7,7 @@ from tool import (
     get_verify,
     check_state,
     get_meta_data,
+    check_fake_url,
 )
 import re
 from rich import print
@@ -132,7 +133,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
 
     try:
         audioUrl = audio["src"]
-        if ".ysxs.top" not in audioUrl:
+        if not check_fake_url(audioUrl):
             raise RuntimeError(
                 f"检测到蜜罐url, 建议更换ip, .ysxs.top not in {audioUrl}"
             )
