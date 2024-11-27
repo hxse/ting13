@@ -52,7 +52,7 @@ def run_browser(
         {
             "url": url,
             "callback": callback,
-            "profile": "pikachu",
+            "profile": f"pikachu{i}",
             "headless": headless,
             "user_agent": UserAgent.HASHED,
             "window_size": WindowSize.HASHED,
@@ -60,19 +60,8 @@ def run_browser(
             "output_dir": output_dir,
             "waitTime": 2,
             "timeout": 120,
-        },
-        {
-            "url": url,
-            "callback": callback,
-            "profile": "pikachu2",
-            "headless": headless,
-            "user_agent": UserAgent.HASHED,
-            "window_size": WindowSize.HASHED,
-            "proxy": "http://127.0.0.1:7890",
-            "output_dir": output_dir,
-            "waitTime": 2,
-            "timeout": 120,
-        },
+        }
+        for i in range(5)
     ][0]
     return browser_driver(user_profile)
 
