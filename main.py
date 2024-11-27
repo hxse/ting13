@@ -25,6 +25,7 @@ def main(
     page: None | int = None,
     c_min: None | int = None,
     c_max: None | int = None,
+    profile: int = 0,
 ):
     """
     page: 指定章节页面
@@ -37,7 +38,9 @@ def main(
         output_dir = get_output_dir(data, url, output_dir)
     else:
         print(f"[bold orange1]get home page:[/] {url}")
-        [data, meta_data] = run_browser(url, callback=get_home_page, headless=headless)
+        [data, meta_data] = run_browser(
+            url, callback=get_home_page, headless=headless, profile=profile
+        )
         data["meta_data"] = meta_data
         output_dir = get_output_dir(data, url, output_dir)
         json_file = get_output_json(output_dir)
@@ -61,7 +64,7 @@ def main(
                     continue
 
             [res, meta_data] = run_browser(
-                url, callback=get_home_page, headless=headless
+                url, callback=get_home_page, headless=headless, profile=profile
             )
             data["meta_data"] = meta_data
             data["chapters"][k] = res["chapters"][0]
@@ -89,6 +92,7 @@ def main(
                         callback=get_audio_page,
                         headless=headless,
                         output_dir=output_dir,
+                        profile=profile,
                     )
                     data["meta_data"] = meta_data
                     if "audioUrl" in res and res["audioUrl"]:

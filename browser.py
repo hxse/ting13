@@ -43,7 +43,11 @@ def browser_driver(driver: Driver, data):
 
 
 def run_browser(
-    url, callback: any = get_home_page, headless: bool = False, output_dir: str = ""
+    url,
+    callback: any = get_home_page,
+    headless: bool = False,
+    output_dir: str = "",
+    profile: int = 0,
 ):
     """
     目前用不着两个profile, 一个就行了
@@ -62,7 +66,7 @@ def run_browser(
             "timeout": 120,
         }
         for i in range(5)
-    ][0]
+    ][profile]
     return browser_driver(user_profile)
 
 
