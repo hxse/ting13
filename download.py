@@ -11,7 +11,7 @@ from rich import print
     raise_exception=True,
 )
 def request_download(request: Request, data):
-    def _(_max=5, retry=1):
+    def _(_max=7, retry=1):
         if retry > _max:
             raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
         elif retry > 1:
