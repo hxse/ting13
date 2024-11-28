@@ -10,6 +10,8 @@ import shutil
 
 download_dir = Path.home() / "Downloads"
 
+refresh_profile = {"refresh": False, "count": 0}
+
 
 class safelist(list):
     def get(self, index, default=None):

@@ -13,7 +13,7 @@ import json
 import typer
 from pathvalidate import sanitize_filename
 from callback import get_home_page
-from tool import remove_dir
+from tool import remove_dir, refresh_profile
 
 
 @browser(
@@ -49,7 +49,7 @@ def run_browser(
     output_dir: str = "",
     profile: int = 0,
     config: any = {},
-    refresh_profile: bool = False,
+    refresh_profile: dict = refresh_profile,
 ):
     """
     目前用不着两个profile, 一个就行了
@@ -71,7 +71,8 @@ def run_browser(
         for i in range(50)
     ][profile]
 
-    if refresh_profile:
+    if refresh_profile["refresh"] and refresh_profile["count"] == 0:
+        refresh_profile["count"] += 1
         profile_path = Path("profiles") / user_profile["profile"]
         remove_dir(profile_path)
 
