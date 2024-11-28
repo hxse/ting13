@@ -48,6 +48,7 @@ def run_browser(
     headless: bool = False,
     output_dir: str = "",
     profile: int = 0,
+    config: any = {},
 ):
     """
     目前用不着两个profile, 一个就行了
@@ -64,8 +65,9 @@ def run_browser(
             "output_dir": output_dir,
             "waitTime": 2,
             "timeout": 120,
+            "config": config,
         }
-        for i in range(5)
+        for i in range(50)
     ][profile]
     return browser_driver(user_profile)
 

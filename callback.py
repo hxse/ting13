@@ -8,9 +8,11 @@ from tool import (
     check_state,
     get_meta_data,
     check_fake_url,
+    safelist,
 )
 import re
 from rich import print
+import random
 
 
 def get_home_page(driver, data):
@@ -57,14 +59,22 @@ def get_home_page(driver, data):
     ]
 
 
-def login(driver, _p, soup, url, waitTime):
+def login(driver, _p, soup, url, waitTime, config):
     loginUrl = soup.select_one(".tiquma a")["href"]
     driver.get(get_domain(url) + loginUrl, wait=waitTime)
     driver.wait_for_element(".verify", wait=Wait.LONG)
     driver.sleep(2)
 
+    account = safelist(random.choice(config["account"]))
+    default_username = account.get(0, "")
+    default_password = account.get(1, "")
+    print(f"if empty, use: {default_username}")
     username = input("email: ")
+    username = username if username else default_username
+    print(f"if empty, use: {default_password}")
     password = input("password: ")
+    password = password if password else default_password
+
     driver.type("input[name='username']", username)
     driver.type("input[name='password']", password)
     width = 100
@@ -121,7 +131,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if "登录继续收听！" in fix_bug.text:
         print("[bold red]登录继续收听, 建议关闭headless, 然后手动登录[/]")
         _p = get_verify(data["output_dir"])
-        if login(driver, _p, soup, url, data["waitTime"]):
+        if login(driver, _p, soup, url, data["waitTime"], data["config"]):
             print("[bold green]login success[/]")
             if _p.is_file():
                 _p.unlink()

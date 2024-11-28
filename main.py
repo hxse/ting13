@@ -12,6 +12,7 @@ from tool import (
     check_count,
     check_audio,
     parse_url,
+    get_config,
 )
 from callback import get_home_page, get_audio_page
 from download import run_download
@@ -32,6 +33,7 @@ def main(
     c_min: 当前页面最小章节数, 留空下载当前页面所有章节
     c_max: 当前页面最大章节数, 留空下载当前页面所有章节
     """
+    config = get_config()
     json_file = find_json(url)
     data = load_json(json_file) if json_file else None
     if data:
@@ -39,7 +41,11 @@ def main(
     else:
         print(f"[bold orange1]get home page:[/] {url}")
         [data, meta_data] = run_browser(
-            url, callback=get_home_page, headless=headless, profile=profile
+            url,
+            callback=get_home_page,
+            headless=headless,
+            profile=profile,
+            config=config,
         )
         data["meta_data"] = meta_data
         output_dir = get_output_dir(data, url, output_dir)
@@ -64,7 +70,11 @@ def main(
                     continue
 
             [res, meta_data] = run_browser(
-                url, callback=get_home_page, headless=headless, profile=profile
+                url,
+                callback=get_home_page,
+                headless=headless,
+                profile=profile,
+                config=config,
             )
             data["meta_data"] = meta_data
             data["chapters"][k] = res["chapters"][0]
@@ -93,6 +103,7 @@ def main(
                         headless=headless,
                         output_dir=output_dir,
                         profile=profile,
+                        config=config,
                     )
                     data["meta_data"] = meta_data
                     if "audioUrl" in res and res["audioUrl"]:

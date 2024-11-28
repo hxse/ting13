@@ -7,12 +7,27 @@ from time import time, sleep
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
+download_dir = Path.home() / "Downloads"
+
+
+class safelist(list):
+    def get(self, index, default=None):
+        try:
+            return self[index]
+        except IndexError:
+            return default
+
+
+def get_config(json_file="./config.json"):
+    try:
+        with open(json_file, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        return {"account": []}
+
 
 def get_domain(url: str):
     return "/".join(url.split("/")[0:3])
-
-
-download_dir = Path.home() / "Downloads"
 
 
 def get_id(url):
