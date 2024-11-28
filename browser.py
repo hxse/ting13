@@ -72,6 +72,7 @@ def run_browser(
     ][profile]
 
     if refresh_profile["refresh"] and refresh_profile["count"] == 0:
+        print(f"refresh profile")
         refresh_profile["count"] += 1
         profile_path = Path("profiles") / user_profile["profile"]
         remove_dir(profile_path)
