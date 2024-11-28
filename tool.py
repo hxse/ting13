@@ -6,6 +6,7 @@ from imageinterminal import display_image
 from time import time, sleep
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
+import shutil
 
 download_dir = Path.home() / "Downloads"
 
@@ -24,6 +25,11 @@ def get_config(json_file="./config.json"):
             return json.load(file)
     except json.JSONDecodeError:
         return {"account": []}
+
+
+def remove_dir(path):
+    if path.is_dir():
+        shutil.rmtree(path)
 
 
 def get_domain(url: str):

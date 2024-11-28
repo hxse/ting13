@@ -27,6 +27,7 @@ def main(
     c_min: None | int = None,
     c_max: None | int = None,
     profile: int = 0,
+    refresh_profile: bool = False,
 ):
     """
     page: 指定章节页面
@@ -46,6 +47,7 @@ def main(
             headless=headless,
             profile=profile,
             config=config,
+            refresh_profile=refresh_profile,
         )
         data["meta_data"] = meta_data
         output_dir = get_output_dir(data, url, output_dir)
@@ -75,6 +77,7 @@ def main(
                 headless=headless,
                 profile=profile,
                 config=config,
+                refresh_profile=refresh_profile,
             )
             data["meta_data"] = meta_data
             data["chapters"][k] = res["chapters"][0]
@@ -104,6 +107,7 @@ def main(
                         output_dir=output_dir,
                         profile=profile,
                         config=config,
+                        refresh_profile=refresh_profile,
                     )
                     data["meta_data"] = meta_data
                     if "audioUrl" in res and res["audioUrl"]:

@@ -13,7 +13,7 @@ import json
 import typer
 from pathvalidate import sanitize_filename
 from callback import get_home_page
-from tool import check_audio
+from tool import remove_dir
 
 
 @browser(
@@ -49,6 +49,7 @@ def run_browser(
     output_dir: str = "",
     profile: int = 0,
     config: any = {},
+    refresh_profile: bool = False,
 ):
     """
     目前用不着两个profile, 一个就行了
@@ -69,6 +70,11 @@ def run_browser(
         }
         for i in range(50)
     ][profile]
+
+    if refresh_profile:
+        profile_path = Path("profiles") / user_profile["profile"]
+        remove_dir(profile_path)
+
     return browser_driver(user_profile)
 
 
