@@ -32,6 +32,8 @@ def request_download(request: Request, data):
         except ClientException as e:
             print(f"[bold red]{e}[/]")
             return _(retry=retry + 1)
+        if response.status_code == 404:
+            raise RuntimeError(f"get 404 {url}")
         with open(file_path, "wb") as f:
             f.write(response.content)
 
