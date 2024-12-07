@@ -91,11 +91,14 @@ def get_output_json(output_dir):
     return output_dir / (output_dir.name + ".json")
 
 
-def check_audio(file_path):
+def check_audio(file_path, check_size=False):
     new_file_path = file_path.parent / ("!" + file_path.name)
-    return (file_path.is_file() and file_path.stat().st_size > 0) or (
-        new_file_path.is_file() and new_file_path.stat().st_size > 0
-    )
+    if check_size:
+        return (file_path.is_file() and file_path.stat().st_size > 0) or (
+            new_file_path.is_file() and new_file_path.stat().st_size > 0
+        )
+    else:
+        return file_path.is_file() or new_file_path.is_file()
 
 
 def get_name(data, chapter, idx):

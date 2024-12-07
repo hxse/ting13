@@ -29,6 +29,7 @@ def main(
     c_max: None | int = None,
     profile: int = 0,
     refresh: bool = False,
+    check_size: bool = False,
 ):
     """
     page: 指定章节页面
@@ -120,7 +121,7 @@ def main(
 
                 if "audioUrl" in chapter and len(chapter["audioUrl"]) > 0:
                     audio_path = get_audio_path(output_dir, data, chapter, idx=count)
-                    if check_audio(audio_path):
+                    if check_audio(audio_path, check_size=check_size):
                         print(
                             f"{count}/{data['chapters_count']} [bold green]skip audio[/] {audio_path.name}"
                         )
@@ -131,6 +132,7 @@ def main(
                         audio_path,
                         cookies=data["meta_data"].get("cookies", {}),
                         headers=data["meta_data"].get("headers", {}),
+                        check_size=check_size,
                     )
 
                     print(

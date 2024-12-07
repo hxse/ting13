@@ -22,7 +22,8 @@ def request_download(request: Request, data):
             )
         file_path = Path(data["file_path"])
         url = data["url"]
-        if check_audio(file_path):
+
+        if check_audio(file_path, check_size=data["check_size"]):
             print(f"[bold blue]skip audio[/] {file_path.name}")
             return
         try:
@@ -33,7 +34,12 @@ def request_download(request: Request, data):
             print(f"[bold red]{e}[/]")
             return _(retry=retry + 1)
         if response.status_code == 404:
-            raise RuntimeError(f"get 404 {url}\n{file_path.name}")
+            # raise RuntimeError(f"get 404 {url}\n{file_path.name}")
+            with open(file_path, "wb") as f:
+                print(f"empty file {file_path.name}")
+                print(f"get 404 {url}")
+                f.write(b"")
+                return
         with open(file_path, "wb") as f:
             f.write(response.content)
 
@@ -45,9 +51,16 @@ def run_download(
     file_path: str,
     cookies: dict,
     headers: dict,
+    check_size: bool = False,
 ):
     request_download(
-        {"url": url, "file_path": file_path, "cookies": cookies, "headers": headers}
+        {
+            "url": url,
+            "file_path": file_path,
+            "cookies": cookies,
+            "headers": headers,
+            "check_size": check_size,
+        }
     )
 
 
