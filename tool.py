@@ -42,7 +42,7 @@ def get_id(url):
     return url.split("?")[0].strip("/").split("/")[-1]
 
 
-def check_fake_url(url, white_list=[".dnse.top", ".ysxs.top"]):
+def check_fake_url(url, white_list=[".dnse.top", ".ysxs.top", ".itingshu.net"]):
     flag = False
     for s in white_list:
         if s in url:
