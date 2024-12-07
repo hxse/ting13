@@ -34,10 +34,15 @@ def get_home_page(driver, data):
     ]
     assert len(chapters) != 0, f"chapters: {len(chapters)}"
     _c = soup.select(".hd-sel option")
-    _count = re.sub("[\u4e00-\u9fa5]", "", _c[-1].text)
-    chapters_count = int(_count.split(" ")[-1])
-    pages = [domain + i["value"] for i in _c]
-    pages_count = len(pages)
+    if not _c:
+        chapters_count = len(playlist)
+        pages = [url]
+        pages_count = 1
+    else:
+        _count = re.sub("[\u4e00-\u9fa5]", "", _c[-1].text)
+        chapters_count = int(_count.split(" ")[-1])
+        pages = [domain + i["value"] for i in _c]
+        pages_count = len(pages)
 
     return [
         {
