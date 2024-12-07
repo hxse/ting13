@@ -42,7 +42,16 @@ def get_id(url):
     return url.split("?")[0].strip("/").split("/")[-1]
 
 
-def check_fake_url(url, white_list=[".dnse.top", ".ysxs.top", ".itingshu.net"]):
+def check_fake_url(
+    url,
+    white_list=[
+        ".dnse.top",
+        ".ysxs.top",
+        ".itingshu.net",
+        "vohwod-sign.qtfm.cn",
+        "txvcdn-yishihui.tliveapp.com",
+    ],
+):
     flag = False
     for s in white_list:
         if s in url:
@@ -104,7 +113,7 @@ def check_audio(file_path, check_size=False):
 def get_name(data, chapter, idx):
     count_len = len(str(data["chapters_count"]))
     fill_index = str(idx).zfill(count_len)
-    suffix = chapter["audioUrl"].split(".")[-1]
+    suffix = chapter["audioUrl"].split("?")[0].split(".")[-1]
 
     name = sanitize_filename(f"{fill_index} {chapter['chapterTitle']}.{suffix}")
     return name
