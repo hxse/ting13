@@ -132,6 +132,7 @@ def main(
                         cookies=data["meta_data"].get("cookies", {}),
                         headers=data["meta_data"].get("headers", {}),
                     )
+
                     print(
                         f"{count}/{data['chapters_count']} [bold green]success download audio[/] {audio_path.name}"
                     )

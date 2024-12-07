@@ -33,7 +33,7 @@ def request_download(request: Request, data):
             print(f"[bold red]{e}[/]")
             return _(retry=retry + 1)
         if response.status_code == 404:
-            raise RuntimeError(f"get 404 {url}")
+            raise RuntimeError(f"get 404 {url}\n{file_path.name}")
         with open(file_path, "wb") as f:
             f.write(response.content)
 
