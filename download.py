@@ -40,8 +40,16 @@ def request_download(request: Request, data):
                 print(f"get 404 {url}")
                 f.write(b"")
                 return
-        with open(file_path, "wb") as f:
-            f.write(response.content)
+        try:
+            if "文件或目录中找不到" in response.text:
+                with open(file_path, "wb") as f:
+                    print(f"empty file {file_path.name}")
+                    print(f"get 文件或目录中找不到 {url}")
+                    f.write(b"")
+                    return
+        except UnicodeDecodeError as e:
+            with open(file_path, "wb") as f:
+                f.write(response.content)
 
     return _()
 
