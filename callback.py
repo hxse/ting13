@@ -129,6 +129,7 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
         return get_audio_page(driver, data, retry=retry + 1)
 
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
+    driver.sleep(3)
     soup = soupify(driver)
 
     audio = soup.select_one("#thisbody audio")
