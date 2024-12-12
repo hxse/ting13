@@ -124,7 +124,7 @@ def switch_source(driver, soup, url, data):
     newUrl = get_domain(url) + option[0]["value"]
     if newUrl == data["url"]:
         return ""
-    return get_domain(url) + option[0]["value"]
+    return newUrl
 
 
 def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
