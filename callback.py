@@ -111,17 +111,20 @@ def login(driver, _p, soup, url, waitTime, config):
 
 
 def switch_source(driver, soup, url, data):
-    driver.click("#tiquma .tiquma-bottom a")
-    driver.sleep(1)
+    # driver.click("#tiquma .tiquma-bottom a")
+    # driver.sleep(1)
     soup = soupify(driver)
     option = [
         i for i in soup.select(".xialas option") if i.text == data["source"].strip()
     ]
     if len(option) == 0:
         raise RuntimeError(f"换源失败 {data['source']} {url}")
-    driver.get(get_domain(url) + option[0]["value"], wait=data["waitTime"])
-    check_state(driver, timeout=data["timeout"])
-    driver.sleep(3)
+    if "javascript:void(0);" in option[0]["value"]:
+        return ""
+    newUrl = get_domain(url) + option[0]["value"]
+    if newUrl == data["url"]:
+        return ""
+    return get_domain(url) + option[0]["value"]
 
 
 def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
@@ -146,12 +149,12 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     driver.sleep(3)
     soup = soupify(driver)
     fix_bug = soup.select_one("#tiquma .tiquma")
-    if "抱歉,音频加载失败！" in fix_bug.text:
-        print(f"[bold red]检测到音频加载失败, 正在尝试换源: {data['source']}[/]")
-        if data["source"]:
-            switch_source(driver, soup, url, data)
-        else:
-            raise RuntimeError(f"[bold red]没有指定源 {data['source']} {url}[/]")
+    if data["source"]:
+        newUrl = switch_source(driver, soup, url, data)
+        if newUrl:
+            data["url"] = newUrl
+            print(f"[bold red]正在尝试换源: {data['source']}[/]")
+            return get_audio_page(driver, data, retry2=retry2 + 1)
     if "登录继续收听！" in fix_bug.text:
         print("[bold red]登录继续收听, 建议关闭headless, 然后手动登录[/]")
         _p = get_verify(data["output_dir"])
