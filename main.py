@@ -30,6 +30,7 @@ def main(
     profile: int = 0,
     refresh: bool = False,
     check_size: bool = False,
+    source: str = "",
 ):
     """
     page: 指定章节页面
@@ -111,6 +112,7 @@ def main(
                         profile=profile,
                         config=config,
                         refresh_profile=_refresh_profile,
+                        source=source,
                     )
                     data["meta_data"] = meta_data
                     if "audioUrl" in res and res["audioUrl"]:

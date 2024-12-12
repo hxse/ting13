@@ -50,6 +50,7 @@ def run_browser(
     profile: int = 0,
     config: any = {},
     refresh_profile: dict = refresh_profile,
+    source: str = "",
 ):
     """
     目前用不着两个profile, 一个就行了
@@ -67,6 +68,7 @@ def run_browser(
             "waitTime": 2,
             "timeout": 120,
             "config": config,
+            "source": source,
         }
         for i in range(50)
     ][profile]

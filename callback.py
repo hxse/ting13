@@ -65,7 +65,7 @@ def get_home_page(driver, data):
 
 
 def login(driver, _p, soup, url, waitTime, config):
-    loginUrl = soup.select_one(".tiquma a")["href"]
+    loginUrl = soup.select_one("#tiquma .tiquma a")["href"]
     driver.get(get_domain(url) + loginUrl, wait=waitTime)
     driver.wait_for_element(".verify", wait=Wait.LONG)
     driver.sleep(2)
@@ -110,6 +110,20 @@ def login(driver, _p, soup, url, waitTime, config):
     return top[-1].text == "退出登陆"
 
 
+def switch_source(driver, soup, url, data):
+    driver.click("#tiquma .tiquma-bottom a")
+    driver.sleep(1)
+    soup = soupify(driver)
+    option = [
+        i for i in soup.select(".xialas option") if i.text == data["source"].strip()
+    ]
+    if len(option) == 0:
+        raise RuntimeError(f"换源失败 {data['source']} {url}")
+    driver.get(get_domain(url) + option[0]["value"], wait=data["waitTime"])
+    check_state(driver, timeout=data["timeout"])
+    driver.sleep(3)
+
+
 def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     if retry > _max or retry2 > _max:
         raise RuntimeError(f"已达到最大重试次数{_max} {data['url']}")
@@ -131,9 +145,13 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
     driver.wait_for_element("#thisbody", wait=Wait.LONG)
     driver.sleep(3)
     soup = soupify(driver)
-
-    audio = soup.select_one("#thisbody audio")
-    fix_bug = soup.select_one(".tiquma")
+    fix_bug = soup.select_one("#tiquma .tiquma")
+    if "抱歉,音频加载失败！" in fix_bug.text:
+        print(f"[bold red]检测到音频加载失败, 正在尝试换源: {data['source']}[/]")
+        if data["source"]:
+            switch_source(driver, soup, url, data)
+        else:
+            raise RuntimeError(f"[bold red]没有指定源 {data['source']} {url}[/]")
     if "登录继续收听！" in fix_bug.text:
         print("[bold red]登录继续收听, 建议关闭headless, 然后手动登录[/]")
         _p = get_verify(data["output_dir"])
@@ -148,6 +166,8 @@ def get_audio_page(driver, data, _max=5, retry=1, retry2=1):
         raise Exception("访问过快！过段时间再试！")
 
     try:
+        soup = soupify(driver)
+        audio = soup.select_one("#thisbody audio")
         audioUrl = audio["src"]
         if not check_fake_url(audioUrl):
             raise RuntimeError(
