@@ -42,6 +42,9 @@ def get_id(url):
     return url.split("?")[0].strip("/").split("/")[-1]
 
 
+error_url = "cdn/87313.mp3"
+
+
 def check_fake_url(
     url,
     white_list=[
@@ -50,6 +53,7 @@ def check_fake_url(
         ".itingshu.net",
         "vohwod-sign.qtfm.cn",
         "txvcdn-yishihui.tliveapp.com",
+        error_url,
     ],
 ):
     flag = False

@@ -1,4 +1,4 @@
-from tool import check_audio, download_dir
+from tool import check_audio, download_dir, error_url
 from botasaurus.request import request, Request
 from botasaurus_requests.exceptions import ClientException
 from pathlib import Path
@@ -26,6 +26,12 @@ def request_download(request: Request, data):
         if check_audio(file_path, check_size=data["check_size"]):
             print(f"[bold blue]skip audio[/] {file_path.name}")
             return
+        if url.endswith(error_url):
+            with open(file_path, "wb") as f:
+                print(f"empty file {file_path.name}")
+                print(f"empty url {url}")
+                f.write(b"")
+                return
         try:
             response = request.get(
                 url, cookies=data["cookies"], headers=data["headers"]
