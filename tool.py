@@ -97,7 +97,7 @@ def get_verify(path, name="verify.jpg"):
 
 
 def get_output_dir(data, url, output_dir):
-    return sanitize_filename(Path(output_dir) / f"{data['title']} {get_id(url)}")
+    return Path(output_dir) / sanitize_filename(f"{data['title']} {get_id(url)}")
 
 
 def get_output_json(output_dir):
